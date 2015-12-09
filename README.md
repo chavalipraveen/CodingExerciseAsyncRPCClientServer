@@ -14,4 +14,6 @@ Start the RPC Server
 
 Run the RPC Client
   Set the classpath to the dependent libraries and the target/classes directory
-  java com.exercise.client.RPCClient 2+(8-3)*6/2
+  java com.exercise.client.RPCClient 2+(8-3)*6/2;.
+  
+The statement needs to be ended with a ";" followed by a "."
