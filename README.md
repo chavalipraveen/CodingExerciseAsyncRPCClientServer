@@ -5,6 +5,11 @@ Pull the following projects
   GenericMessageBus
   RPCServer
   RPCClient
+  
+Pre-requisite:
+RabbitMQ server needs to be installed and running. The host/port of the RabbitMQ server needs to be configured in the project.properties file for both RPCServer and RPCClient:
+  - RPCServer/src/main/resources
+  - RPCClient/src/main/resources
 
 Run “mvn install” in each of the project directories (GenericMessageBus needs to be built first)
 
