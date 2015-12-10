@@ -26,6 +26,10 @@ public class RPCWorker extends UntypedActor {
         this.channel = channel;
     }
 
+    public RPCWorker() {
+
+    }
+
     @Override
     public void onReceive(Object msg) throws Exception {
         String response = "";
@@ -41,7 +45,7 @@ public class RPCWorker extends UntypedActor {
             long deliveryTag = message.getDeliveryTag();
             try {
                 log.info("Parsing (" + body + ") using recursive descent");
-                response = "" + rdParse(body);
+                response = rdParse(body);
             } catch (Exception e) {
                 log.error(e.toString());
             } finally {
@@ -50,6 +54,12 @@ public class RPCWorker extends UntypedActor {
                 channel.ack(deliveryTag);
 
                 getContext().stop(getSelf());
+            }
+        } else if (msg instanceof String) {
+            // This is probably a test case. Just return the response string.
+            response = rdParse((String) msg);
+            if (getSender() != null) {
+                getSender().tell(response, null);
             }
         }
 

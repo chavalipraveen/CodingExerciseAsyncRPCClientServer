@@ -1,5 +1,8 @@
 package com.exercise.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -55,11 +58,42 @@ public class RPCClient extends UntypedActor {
         /**
          * Create a message bus implementation for RabbitMQ
          */
-        MessageBusFactory factory = new MessageBusFactory();
-        bus = factory.createMessageBus(MessageBusFactory.RABBIT_MQ_MESSAGE_BUS);
-        bus.initialize("localhost", 5672);
+        String mbHost, mbPort;
+        InputStream stream = ClassLoader.getSystemResourceAsStream("project.properties");
 
-        channel = bus.createChannel();
+        Properties props = new Properties();
+        try {
+            props.load(stream);
+            mbHost = props.getProperty("message.bus.host", "localhost");
+            mbPort = props.getProperty("message.bus.port", "5672");
+            log.info("Using host (" + mbHost + ") and port (" + mbPort + ") for message bus");
+        } catch (IOException e1) {
+            log.error("Error reading project properties. Using defaults hostname: localhost and port: 5672");
+            mbHost = "localhost";
+            mbPort = "5672";
+        }
+
+        mbHost = props.getProperty("message.bus.host", "localhost");
+        mbPort = props.getProperty("message.bus.port", "5672");
+
+        int port = 5672;
+        try {
+            port = Integer.parseInt(mbPort);
+        } catch (NumberFormatException e) {
+            port = 5672;
+        }
+
+        MessageBusFactory factory = new MessageBusFactory();
+        try {
+            bus = factory.createMessageBus(MessageBusFactory.RABBIT_MQ_MESSAGE_BUS);
+
+            bus.initialize(mbHost, port);
+
+            channel = bus.createChannel();
+        } catch (Exception e1) {
+            log.error("Exiting because of exception: " + e1.getLocalizedMessage());
+            System.exit(-1);
+        }
 
         // Start an anonymous channel which will receive the server's responses
         replyQueueName = channel.startAnonymous(GenericChannel.CHANNEL_CLIENT);

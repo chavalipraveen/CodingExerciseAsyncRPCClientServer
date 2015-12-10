@@ -16,11 +16,11 @@ public class MessageBusFactory {
     public static final String RABBIT_MQ_MESSAGE_BUS = "RABBIT_MQ";
     public static final String UNIMPLEMENTED_MESSAGE_BUS = "UNIMPLEMENTED";
 
-    public GenericMessageBus createMessageBus(String name) {
+    public GenericMessageBus createMessageBus(String name) throws Exception {
         if (RABBIT_MQ_MESSAGE_BUS.equals(name)) {
             return new RMQMessageBus();
         } else {
-            return null;
+            throw new Exception("Not yet implemented!");
         }
     }
 }

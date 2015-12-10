@@ -6,6 +6,17 @@
   <name>RPC Server</name>
   <description>RPC Server that parses trees using recursive descent</description>
   <build>
+    <resources>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>                      
+                <include>**/*.properties</include>
+            </includes>
+        </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+        </resource>
+    </resources>
   	<pluginManagement>
   		<plugins>
   			<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->

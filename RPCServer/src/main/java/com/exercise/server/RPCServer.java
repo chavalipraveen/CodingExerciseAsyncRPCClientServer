@@ -1,5 +1,9 @@
 package com.exercise.server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +30,7 @@ public class RPCServer extends UntypedActor {
 
     private static final Logger log = LoggerFactory.getLogger(RPCServer.class);
 
-    private static final String RPC_QUEUE_NAME = "rpc_queue";
+    public static final String RPC_QUEUE_NAME = "rpc_queue";
 
     private static ActorSystem system = ActorSystem.create("RPCServer");
 
@@ -41,9 +45,32 @@ public class RPCServer extends UntypedActor {
             /**
              * Create a message bus implementation for RabbitMQ
              */
+            String mbHost, mbPort;
+            InputStream stream = ClassLoader.getSystemResourceAsStream("project.properties");
+
+            Properties props = new Properties();
+            try {
+                props.load(stream);
+                mbHost = props.getProperty("message.bus.host", "localhost");
+                mbPort = props.getProperty("message.bus.port", "5672");
+                log.info("Using host (" + mbHost + ") and port (" + mbPort + ") for message bus");
+            } catch (IOException e1) {
+                log.error("Error reading project properties. Using defaults hostname: localhost and port: 5672");
+                mbHost = "localhost";
+                mbPort = "5672";
+            }
+
             MessageBusFactory factory = new MessageBusFactory();
+
             bus = factory.createMessageBus(MessageBusFactory.RABBIT_MQ_MESSAGE_BUS);
-            bus.initialize("localhost", 5672);
+            int port = 5672;
+            try {
+                port = Integer.parseInt(mbPort);
+            } catch (NumberFormatException e) {
+                port = 5672;
+            }
+
+            bus.initialize(mbHost, port);
 
             channel = bus.createChannel();
 
@@ -56,7 +83,8 @@ public class RPCServer extends UntypedActor {
             channel.consume(server);
 
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage());
+            log.error("Exiting because of exception: " + e.getLocalizedMessage());
+            System.exit(-1);
         } finally {
             if (bus != null) {
                 try {
