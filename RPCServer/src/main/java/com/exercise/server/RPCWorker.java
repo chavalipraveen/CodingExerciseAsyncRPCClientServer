@@ -61,10 +61,24 @@ public class RPCWorker extends UntypedActor {
      * @return - result of expression evaluation as a String
      */
     private String rdParse(String body) {
-        StringReader sr = new StringReader(body);
-        BufferedReader br = new BufferedReader(sr);
-        Tokenizer tokenizer = new Tokenizer(br);
-        SimpleRDParser parser = new SimpleRDParser(tokenizer);
-        return parser.parse();
+        if (body != null && !body.isEmpty()) {
+            /*
+             * if ('\n' != body.charAt(body.length() - 1)) {
+             * body += body + '\n';
+             * }
+             */
+            StringReader sr = new StringReader(body);
+            BufferedReader br = new BufferedReader(sr);
+            Tokenizer tokenizer = new Tokenizer(br);
+            SimpleRDParser parser = new SimpleRDParser(tokenizer);
+            try {
+                return parser.parse();
+            } catch (Exception e) {
+                log.error(e.getLocalizedMessage());
+                return e.getLocalizedMessage();
+            }
+        } else {
+            return "Bad Input: " + body;
+        }
     }
 }

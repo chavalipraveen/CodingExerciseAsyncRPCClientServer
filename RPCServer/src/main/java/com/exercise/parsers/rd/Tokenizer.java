@@ -22,7 +22,7 @@ public class Tokenizer {
         token = Token.SEMICOLON;
     }
 
-    public int getToken() {
+    public int getToken() throws Exception {
         while (Character.isWhitespace(ch)) {
             ch = buffer.get();
         }
@@ -96,7 +96,7 @@ public class Tokenizer {
         log.error(msg);
     }
 
-    private int getNumber() {
+    private int getNumber() throws Exception {
         int rslt = 0;
         do {
             rslt = rslt * 10 + Character.digit(ch, 10);
@@ -118,16 +118,17 @@ class Buffer {
         this.br = br;
     }
 
-    public char get() {
+    public char get() throws Exception {
         column++;
         if (column >= line.length()) {
             try {
                 line = br.readLine();
             } catch (Exception e) {
                 log.error("Invalid read operation");
-            } // try
+            }
             if (line == null) {
                 log.info("Line is null");
+                throw new Exception("Line is null");
             }
             column = 0;
             if (log.isDebugEnabled()) {

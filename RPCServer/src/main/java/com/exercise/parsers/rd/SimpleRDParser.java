@@ -29,12 +29,12 @@ public class SimpleRDParser {
      * 
      * @return expression value after parsing and evaluation
      */
-    public String parse() {
+    public String parse() throws Exception {
         tokenizer.getToken();
         return statement();
     }
 
-    private String statement() {
+    private String statement() throws Exception {
         // S = { E ";" } "."
         StringBuilder finalValue = new StringBuilder();
         while (tokenizer.token != Token.PERIOD) {
@@ -45,7 +45,7 @@ public class SimpleRDParser {
         return finalValue.toString();
     }
 
-    private int expression() {
+    private int expression() throws Exception {
         // E = T { ( "+" | "-" ) T }
         int left = term();
         while (tokenizer.token == Token.PLUS || tokenizer.token == Token.MINUS) {
@@ -63,7 +63,7 @@ public class SimpleRDParser {
         return left;
     }
 
-    private int term() {
+    private int term() throws Exception {
         // T = F { ( "*" | "/" ) F }
         int left = factor();
         while (tokenizer.token == Token.MULTIPLY || tokenizer.token == Token.DIVIDE) {
@@ -81,7 +81,7 @@ public class SimpleRDParser {
         return left;
     }
 
-    private int factor() {
+    private int factor() throws Exception {
         // F = NUMBER | "(" E ")"
         int value = 0;
         switch (tokenizer.token) {
