@@ -66,8 +66,16 @@ public class Tokenizer {
                     break;
 
                 case '=':
+                    // Found one '=', expect another or fail
+                    // "==" is our conditional operator
                     ch = buffer.get();
-                    token = Token.ASSIGN;
+                    if (ch != '=') {
+                        String msg = "Illegal character " + ch + ", expecting " + Token.toString(Token.ASSIGN);
+                        error(msg);
+                        throw new Exception("msg");
+                    }
+                    token = Token.LOGICAL_EQUALS;
+                    ch = buffer.get();
                     break;
 
                 case '(':

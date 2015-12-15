@@ -13,8 +13,9 @@ class Token {
     public static final int RIGHT_PAREN = 8;
     public static final int LETTER = 9;
     public static final int NUMBER = 10;
+    public static final int LOGICAL_EQUALS = 11;
 
-    private static String[] tokens = {";", ".", "+", "-", "*", "/", "=", "(", ")", "letter", "number"};
+    private static String[] tokens = {";", ".", "+", "-", "*", "/", "=", "(", ")", "letter", "number", "=="};
 
     public static String toString(int i) {
         if (i < 0 || i > NUMBER)

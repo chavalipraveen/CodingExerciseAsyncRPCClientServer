@@ -5,7 +5,7 @@ package com.exercise.parsers.rd;
  * 
  * The grammar:
  * 
- * S = { E ";" } "."
+ * S = { E { "=""=" E } ";" } "."
  * E = T { ( "+" | "-" ) T }
  * T = F { ( "*" | "/" ) F }
  * F = NUMBER | "(" E ")"
@@ -35,11 +35,22 @@ public class SimpleRDParser {
     }
 
     private String statement() throws Exception {
-        // S = { E ";" } "."
+        // S = { E { "=""=" E} ";" } "."
         StringBuilder finalValue = new StringBuilder();
         while (tokenizer.token != Token.PERIOD) {
-            int value = expression();
-            finalValue.append(value);
+            int lvalue = expression();
+            int rvalue = 0;
+            if (tokenizer.token == Token.LOGICAL_EQUALS) {
+                tokenizer.getToken();
+                rvalue = expression();
+                if (lvalue == rvalue) {
+                    finalValue.append("true");
+                } else {
+                    finalValue.append("false");
+                }
+            } else {
+                finalValue.append(lvalue);
+            }
             tokenizer.getToken();
         }
         return finalValue.toString();
@@ -96,9 +107,11 @@ public class SimpleRDParser {
                     tokenizer.error("Missing ')'");
                 tokenizer.getToken();  // flush ")"
                 break;
-            default:
-                tokenizer.error("Expecting NUMBER or (");
-                break;
+        /*
+         * default:
+         * tokenizer.error("Expecting NUMBER or (");
+         * break;
+         */
         }
         return value;
     }

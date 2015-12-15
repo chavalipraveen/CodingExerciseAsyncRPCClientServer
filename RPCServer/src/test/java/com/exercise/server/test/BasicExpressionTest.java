@@ -44,6 +44,27 @@ public class BasicExpressionTest {
     }
 
     @Test
+    public void conditionTest() {
+        String[] testInput = {"9/3 == 4/2;.", "6/2 == 9/3;.", "(10 - 8)/2 == (2-1)/1;.", "2*1 == 4/2;.", "1==2;.",
+                "4==4;."};
+        String[] testOutput = {"false", "true", "true", "true", "false", "true"};
+        for (int i = 0; i < testInput.length; i++) {
+            StringReader sr = new StringReader(testInput[i]);
+            BufferedReader br = new BufferedReader(sr);
+            Tokenizer tokenizer = new Tokenizer(br);
+            SimpleRDParser parser = new SimpleRDParser(tokenizer);
+            String output = "";
+            try {
+                output = parser.parse();
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            } finally {
+                assertEquals(output, testOutput[i]);
+            }
+        }
+    }
+
+    @Test
     public void passTestWithActors() {
 
         ActorSystem system = ActorSystem.create("RPCServerTest");
@@ -66,8 +87,8 @@ public class BasicExpressionTest {
 
     @Test(expected = Exception.class)
     public void failTest() throws Exception {
-        String badInput = "1+2+3";
-        String badOutput = "";
+        String badInput = "1+2+3= =2+1;.";
+        String badOutput = "false";
         StringReader sr = new StringReader(badInput);
         BufferedReader br = new BufferedReader(sr);
         Tokenizer tokenizer = new Tokenizer(br);
